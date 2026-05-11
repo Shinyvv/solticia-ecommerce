@@ -1,34 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SOLTICIA — Ecommerce boutique premium
 
-## Getting Started
+Aplicación web premium para la tienda conceptual SOLTICIA. Toda la conversión se realiza por WhatsApp. No incluye carrito ni pagos online.
 
-First, run the development server:
+## Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Next.js (App Router)
+- TypeScript
+- Tailwind CSS + shadcn/ui
+- Framer Motion
+- Prisma ORM + PostgreSQL
+
+## Configuración
+
+1. Copia el archivo de entorno y completa los valores:
+
+```
+cp .env.example .env
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Instala dependencias:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+npm install
+```
 
-## Learn More
+3. Genera el cliente Prisma y migra la base de datos:
 
-To learn more about Next.js, take a look at the following resources:
+```
+npx prisma generate
+npx prisma migrate dev --name init
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4. Levanta el entorno de desarrollo:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+npm run dev
+```
 
-## Deploy on Vercel
+## WhatsApp
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Configura el número en `NEXT_PUBLIC_WHATSAPP_NUMBER` para que todos los botones abran la conversación prellenada.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Admin
+
+Usa la ruta `/admin` para crear, editar, ocultar y marcar disponibilidad de productos.
