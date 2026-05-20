@@ -1,11 +1,12 @@
 import { ProductsClient } from "@/components/products-client";
 import { SectionHeading } from "@/components/section-heading";
 import { prisma } from "@/lib/prisma";
+import type { Product } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 export default async function ProductosPage() {
-  let products = [];
+  let products: Product[] = [];
 
   try {
     products = await prisma.product.findMany({
