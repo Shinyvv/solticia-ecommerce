@@ -5,24 +5,13 @@ import { ProductCard } from "@/components/product-card";
 import { SectionHeading } from "@/components/section-heading";
 import { WhatsAppCta } from "@/components/whatsapp-cta";
 import { Button } from "@/components/ui/button";
-import { prisma } from "@/lib/prisma";
 import { getWhatsAppLink } from "@/lib/whatsapp";
-import type { Product } from "@/lib/types";
+import { getFeaturedDemoProducts } from "@/lib/demo-products";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  let featured: Product[] = [];
-
-  try {
-    featured = await prisma.product.findMany({
-      where: { visible: true, destacado: true },
-      take: 6,
-      orderBy: { createdAt: "desc" },
-    });
-  } catch {
-    featured = [];
-  }
+  const featured = getFeaturedDemoProducts();
 
   return (
     <main className="bg-background">

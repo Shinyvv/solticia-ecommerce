@@ -1,18 +1,10 @@
 import { SectionHeading } from "@/components/section-heading";
-import { prisma } from "@/lib/prisma";
+import { getDemoCategories } from "@/lib/demo-products";
 
 export const dynamic = "force-dynamic";
 
 export default async function ColeccionesPage() {
-  let categories: { nombre: string; slug: string }[] = [];
-
-  try {
-    categories = await prisma.category.findMany({
-      orderBy: { nombre: "asc" },
-    });
-  } catch {
-    categories = [];
-  }
+  const categories = getDemoCategories();
 
   return (
     <main className="container space-y-12 py-12">

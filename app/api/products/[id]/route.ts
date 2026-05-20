@@ -1,12 +1,19 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/slug";
+import { getDemoProductById } from "@/lib/demo-products";
+import type { Product } from "@/lib/types";
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+  const existing = getDemoProductById(id);
+
+  if (!existing) {
+    return NextResponse.json({ error: "Producto no encontrado" }, { status: 404 });
+  }
+
   const body = await request.json();
   const nombre = String(body.nombre ?? "").trim();
   const slug = String(body.slug ?? "").trim() || slugify(nombre);
@@ -19,30 +26,25 @@ export async function PUT(
   }
 
   const categoria = String(body.categoria ?? "").trim() || "General";
-  const categorySlug = slugify(categoria);
 
-  await prisma.category.upsert({
-    where: { slug: categorySlug },
-    update: { nombre: categoria },
-    create: { nombre: categoria, slug: categorySlug },
-  });
-
-  const updated = await prisma.product.update({
-    where: { id },
-    data: {
-      nombre,
-      slug,
-      descripcion: String(body.descripcion ?? "").trim(),
-      precio: Number(body.precio ?? 0),
-      categoria,
-      imagenes: Array.isArray(body.imagenes) ? body.imagenes : [],
-      tallas: Array.isArray(body.tallas) ? body.tallas : [],
-      disponible:
-        typeof body.disponible === "boolean" ? body.disponible : undefined,
-      visible: typeof body.visible === "boolean" ? body.visible : undefined,
-      destacado: typeof body.destacado === "boolean" ? body.destacado : undefined,
-    },
-  });
+  const updated: Product = {
+    ...existing,
+    nombre,
+    slug,
+    descripcion: String(body.descripcion ?? "").trim(),
+    precio: Number(body.precio ?? 0),
+    categoria,
+    imagenes: Array.isArray(body.imagenes) ? body.imagenes : existing.imagenes,
+    tallas: Array.isArray(body.tallas) ? body.tallas : existing.tallas,
+    disponible:
+      typeof body.disponible === "boolean"
+        ? body.disponible
+        : existing.disponible,
+    visible:
+      typeof body.visible === "boolean" ? body.visible : existing.visible,
+    destacado:
+      typeof body.destacado === "boolean" ? body.destacado : existing.destacado,
+  };
 
   return NextResponse.json(updated);
 }
@@ -52,6 +54,11 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  await prisma.product.delete({ where: { id } });
-  return NextResponse.json({ ok: true });
+  const existing = getDemoProductById(id);
+
+  if (!existing) {
+    return NextResponse.json({ error: "Producto no encontrado" }, { status: 404 });
+  }
+
+  return NextResponse.json({ ok: true, id });
 }

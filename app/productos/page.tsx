@@ -1,25 +1,12 @@
 import { ProductsClient } from "@/components/products-client";
 import { SectionHeading } from "@/components/section-heading";
-import { prisma } from "@/lib/prisma";
-import type { Product } from "@/lib/types";
+import { getDemoCategories, getVisibleDemoProducts } from "@/lib/demo-products";
 
 export const dynamic = "force-dynamic";
 
 export default async function ProductosPage() {
-  let products: Product[] = [];
-
-  try {
-    products = await prisma.product.findMany({
-      where: { visible: true },
-      orderBy: { createdAt: "desc" },
-    });
-  } catch {
-    products = [];
-  }
-
-  const categories = Array.from(
-    new Set(products.map((product) => product.categoria).filter(Boolean))
-  );
+  const products = getVisibleDemoProducts();
+  const categories = getDemoCategories().map((category) => category.nombre);
 
   return (
     <main className="container space-y-10 py-12">

@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { prisma } from "@/lib/prisma";
+import { getDemoProductBySlug } from "@/lib/demo-products";
 import { formatPrice } from "@/lib/format";
 import { getWhatsAppLink } from "@/lib/whatsapp";
 
@@ -13,9 +13,7 @@ type PageProps = {
 };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const product = await prisma.product.findUnique({
-    where: { slug: params.slug },
-  });
+  const product = getDemoProductBySlug(params.slug);
 
   if (!product) {
     return { title: "Producto no encontrado" };
@@ -32,9 +30,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function ProductoDetallePage({ params }: PageProps) {
-  const product = await prisma.product.findUnique({
-    where: { slug: params.slug },
-  });
+  const product = getDemoProductBySlug(params.slug);
 
   if (!product) notFound();
 
